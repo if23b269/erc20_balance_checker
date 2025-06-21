@@ -22,19 +22,18 @@
         alert("Please install MetaMask");
         return;
       }
-
+    
       try {
         const provider = new ethers.BrowserProvider(window.ethereum);
-        const signer = await provider.getSigner();
-        const userAddress = await signer.getAddress();
-
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const userAddress = accounts[0];
+    
         const contract = new ethers.Contract(tokenAddress, abi, provider);
-
         const [balanceRaw, decimals] = await Promise.all([
           contract.balanceOf(userAddress),
           contract.decimals()
         ]);
-
+    
         const balance = ethers.formatUnits(balanceRaw, decimals);
         document.getElementById("balance").innerText = `Your balance: ${balance} tokens`;
       } catch (err) {
